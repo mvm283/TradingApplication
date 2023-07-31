@@ -23,7 +23,6 @@ public class ImplementationFactoryImpl implements ImplementationFactory {
             return context.getBean(className, Signals.class);
         }
         catch (Exception e) {
-            e.printStackTrace();
             throw new RuntimeException("There is no implementation for the Signal number : " +signalNumber);
         }
     }
