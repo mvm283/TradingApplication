@@ -1,12 +1,11 @@
 package com.db.second.signals.impl;
 
-import com.db.second.algo.Algo;
+import com.db.second.signals.General;
 import com.db.second.signals.Signals;
 import org.springframework.stereotype.Component;
 
-@Component
-public class SignalAction3 implements Signals {
-    public Algo algo = new Algo();
+@Component("SignalAction3")
+public class SignalAction3 extends General implements Signals {
     @Override
     public boolean handleSignal() {
        try {
