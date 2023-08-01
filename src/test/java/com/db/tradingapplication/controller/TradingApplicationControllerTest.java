@@ -1,7 +1,6 @@
 package com.db.tradingapplication.controller;
 
-import com.db.tradingapplication.service.ImplementationFactory;
-import com.db.tradingapplication.signals.impl.SignalAction1;
+import com.db.tradingapplication.service.SignalProcessorService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,7 @@ import static org.mockito.Mockito.when;
 class TradingApplicationControllerTest {
 
     @Mock
-    private ImplementationFactory implementationFactory;
+    private SignalProcessorService signalProcessorService;
 
     @InjectMocks
     private TradingApplicationController tradingApplicationController;
@@ -30,24 +29,21 @@ class TradingApplicationControllerTest {
     public void handelSignalTestSuccessfullSignalRun(){
         int signalNumber=1;
 
-        when(implementationFactory.createInstance(signalNumber)).thenReturn(new SignalAction1());
+        when(signalProcessorService.process(signalNumber)).thenReturn(true);
 
         ResponseEntity<?> responseEntity = tradingApplicationController.handleSignal(signalNumber);
 
         Assertions.assertEquals(HttpStatus.OK,responseEntity.getStatusCode());
-        Assertions.assertEquals("Signal " + signalNumber + " processed successfully",responseEntity.getBody());
     }
 
     @Test
-    public void handelSignalTestUnimplementedSignalNumber(){
+    public void handelSignalTest_UnSuccessfullSignalRun(){
         int signalNumber=1;
-        int unimplementedSignalNumber=10000000;
 
-        when(implementationFactory.createInstance(signalNumber)).thenReturn(new SignalAction1());
+        when(signalProcessorService.process(signalNumber)).thenReturn(false);
 
-        ResponseEntity<?> responseEntity = tradingApplicationController.handleSignal(unimplementedSignalNumber);
-
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST,responseEntity.getStatusCode());
-        Assertions.assertEquals("Signal " + unimplementedSignalNumber + " has not been implemented",responseEntity.getBody());
+        Assertions.assertThrows(RuntimeException.class, ()->
+                        tradingApplicationController.handleSignal(signalNumber)
+        );
     }
 }

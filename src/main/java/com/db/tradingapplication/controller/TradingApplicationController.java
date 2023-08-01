@@ -1,7 +1,6 @@
 package com.db.tradingapplication.controller;
 
-import com.db.tradingapplication.service.ImplementationFactory;
-import com.db.tradingapplication.signals.Signals;
+import com.db.tradingapplication.service.SignalProcessorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -12,25 +11,20 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value ="api/v1/")
 public class TradingApplicationController {
     Logger logger = LoggerFactory.getLogger(TradingApplicationController.class);
-    private final ImplementationFactory implementationFactory;
+    private final SignalProcessorService signalProcessor;
 
-    public TradingApplicationController(ImplementationFactory implementationFactory) {
-        this.implementationFactory = implementationFactory;
+    public TradingApplicationController(SignalProcessorService signalProcessor) {
+        this.signalProcessor = signalProcessor;
     }
 
     @GetMapping("signal/{signal}")
     public ResponseEntity<?> handleSignal(@PathVariable("signal") int signal) {
 
-        Signals implementation = implementationFactory.createInstance(signal);
-
-        if(implementation==null){
-            logger.error("Signal " + signal + " has not been implemented");
-            return new ResponseEntity<>("Signal " + signal + " has not been implemented", HttpStatus.BAD_REQUEST);
+        if (!signalProcessor.process(signal)){
+            throw new RuntimeException("signal processing has failed");
         }
-
-        implementation.handleSignal();
-
-        logger.info("Signal " + signal + " processed successfully");
         return new ResponseEntity<>("Signal " + signal + " processed successfully", HttpStatus.OK);
     }
+
+
 }

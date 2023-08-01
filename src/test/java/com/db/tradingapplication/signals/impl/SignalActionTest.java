@@ -17,7 +17,6 @@ class SignalActionTest {
 
     }
 
-
     @Test
     public void handleSignalTest(){
         Assertions.assertTrue(signalAction.handleSignal());

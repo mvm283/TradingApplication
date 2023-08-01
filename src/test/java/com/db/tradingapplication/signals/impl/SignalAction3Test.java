@@ -18,11 +18,6 @@ class SignalAction3Test {
     @InjectMocks
     private SignalAction3 signalAction;
 
-    @BeforeEach
-    public void setUp() {
-
-    }
-
 
     @Test
     public void handleSignalTest(){
@@ -32,6 +27,8 @@ class SignalAction3Test {
     public void handleSignalTestUnSuccessfull()  {
 
         doThrow(new RuntimeException()).when(algo).performCalc();
-        Assertions.assertFalse(signalAction.handleSignal());
+        Assertions.assertThrows(Exception.class,()->
+                signalAction.handleSignal()
+        );
     }
 }
